@@ -35,8 +35,6 @@ spec:
 # 1. Keep the imageTag field below the name field for your own script to update the image tag version
 global:
   namespace: slotgame-test
-  # your target environment Ex: qat/uat/prod
-  env: qat
   # it will be used for the image repo, your ecr image repo name will be required to be named it like "qat-api" -> Ex: <account-id>.dkr.ecr.ap-southeast-1.amazonaws.com/qat-api:0.01
   ecr: <ecr repo #<account-id>.dkr.ecr.ap-southeast-1.amazonaws.com>
   secret:
@@ -45,7 +43,8 @@ global:
 
 microservices:
   - name: <service.name>
-    imageTag: v1.0.0     # image tag version 
+    imageTag: v1.0.0     # image tag version **MUST BE UNDER - name field**
+    ecrName: <the ecr name of your respective service>
     replica: 1        #deployment replica with scaled object is disabled
     progressDeadlineSeconds: 600       # remove this field, if not using
     revisionHistoryLimit: 2       # default revision history limit = 10
