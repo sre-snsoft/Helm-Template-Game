@@ -1,6 +1,6 @@
 
 global:
-  namespace: qat-slotgame
+  namespace: <namespace>
   ecr: <account>.dkr.ecr.<region>.amazonaws.com
   secret:
     enabled: true
