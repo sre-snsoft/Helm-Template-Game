@@ -1,0 +1,92 @@
+
+global:
+  namespace: qat-slotgame
+  ecr: <account>.dkr.ecr.<region>.amazonaws.com
+  secret:
+    enabled: true
+    token: <token>
+microservices:
+  - name: service-a
+    imageTag: 0.0.1
+    replica: 11
+    progressDeadlineSeconds: 600
+    scaledObject:
+      enabled: false
+    nodeSelector:
+      role : nodepool
+    command: 
+      - ""
+    args:
+      - ""
+      - ""
+    ports: 
+      - containerPort: <port>
+        name: <port_name>
+        protocol: <port_protocol>
+      - containerPort: <port>
+        name: <port_name>
+        protocol: <port_protocol>
+    env:
+      - env_name1
+    volumeMounts:
+      - volumeMounts_name1
+    terminationMessagePath: ""
+    terminationMessagePolicy: ""
+    workingDir: ""
+    dnsPolicy: ClusterFirst
+    restartPolicy: Always
+    terminationGracePeriodSeconds: 15
+    limits:
+      cpu: '5'
+      memory: 5000Mi
+    requests:
+      cpu: '5'
+      memory: 5000Mi
+    startupProbe:
+      enabled: false
+    readinessProbe:
+      enabled: true
+      method: exec
+      command:
+        - /bin/grpc_health_probe
+        - -addr=:<port>
+        - -rpc-timeout=5s
+      initialDelaySeconds: 10
+    livenessProbe:
+      enabled: true
+      method: exec
+      command:
+        - /bin/grpc_health_probe
+        - -addr=:<port>
+        - -rpc-timeout=5s
+      initialDelaySeconds: 10
+    # created service name will be -> <service-a>-<port_name>-service, can use kubectl get svc -n <namespace> to check
+    services:
+      # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
+      - name: <port_name>
+        port: <port>
+      - name: <port_name>
+        port: <port>
+    ingress:
+      enabled: false
+  - name: service-b
+    imageTag: v0.0.0
+    replica: 1
+    scaledObject:
+      enabled: false
+    nodeSelector: 
+      app: hello
+    limits:
+      cpu: '500m'
+      memory: 500Mi
+    requests:
+      cpu: '500m'
+      memory: 500Mi
+    startupProbe:
+      enabled: false
+    readinessProbe:
+      enabled: false
+    livenessProbe:
+      enabled: false
+    ingress:
+      enabled: false

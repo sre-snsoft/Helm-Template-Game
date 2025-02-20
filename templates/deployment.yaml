@@ -34,7 +34,7 @@ spec:
     spec:
       {{- with .nodeSelector }}
       nodeSelector: 
-        {{- toTaml . | nindenet 8}}
+        {{- toYaml . | nindent 8}}
       {{- end }}
       containers:
         - name: {{ $microservice.name | lower }}
