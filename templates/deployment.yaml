@@ -32,8 +32,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
+      {{- with .nodeSelector }}
       nodeSelector: 
-        role: {{ .nodeSelector }}
+        {{- toTaml . | nindenet 8}}
+      {{- end }}
       containers:
         - name: {{ $microservice.name | lower }}
           image: "{{ $.Values.global.ecr }}/{{ .ecrName }}:{{ .imageTag }}"
