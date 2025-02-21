@@ -41,6 +41,7 @@ spec:
             microservices:
               - name: service-a
                 imageTag: 0.0.1
+                ecrName: <ecr repo name that storing the images of this service>
                 replica: 11
                 progressDeadlineSeconds: 600
                 scaledObject:
