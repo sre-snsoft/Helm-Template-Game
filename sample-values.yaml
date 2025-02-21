@@ -44,7 +44,39 @@ spec:
                 replica: 11
                 progressDeadlineSeconds: 600
                 scaledObject:
-                  enabled: false
+                  enabled: true
+                  minReplicaCount: 1
+                  maxReplicaCount: 2
+                  scaleUp:
+                    stabilizationWindowSeconds: 5 
+                    selectPolicy: Max
+                    pod:
+                      podNumber: 10
+                      seconds: 30
+                    percent:
+                      percentage: 100
+                      seconds: 60
+                    extraPolicies: []
+                  scaleDown:
+                    stabilizationWindowSeconds: 3600
+                    selectPolicy: Min
+                    pod:
+                      podNumber: 4
+                      seconds: 60
+                    percent:
+                      percentage: 50
+                      seconds: 60
+                    extraPolicies: []
+                  cronOne:
+                    start: 00 08 * * *
+                    end: 00 19 * * *
+                    desiredReplicas: 1
+                  cronTwo: 
+                    start: 00 19 * * *
+                    end: 00 23 * * *
+                    desiredReplicas: 1
+                  cpu:
+                    utilization: 60
                 nodeSelector:
                   role : nodepool
                 command: 
