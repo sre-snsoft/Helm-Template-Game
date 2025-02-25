@@ -3,7 +3,17 @@ entries:
   game-chart:
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-02-24T18:41:42.380394+08:00"
+    created: "2025-02-25T09:07:59.112693+08:00"
+    description: A Helm chart for Kubernetes
+    digest: 750599a50b049045ff1a784ec3e80230762771dd3729bb5c331065d8dc8e059b
+    name: game-chart
+    type: application
+    urls:
+    - https://sre-snsoft.github.io/slotgame-helm/game-chart-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: "1.0"
+    created: "2025-02-25T09:07:59.095948+08:00"
     description: A Helm chart for Kubernetes
     digest: cea7597d6a96dce6aef41ae2358a56588456d048220e8498a39923ab18c40c78
     name: game-chart
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://sre-snsoft.github.io/slotgame-helm/game-chart-0.0.1.tgz
     version: 0.0.1
-generated: "2025-02-24T18:41:42.372838+08:00"
+generated: "2025-02-25T09:07:59.088478+08:00"
