@@ -89,6 +89,10 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .ports }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "5"]
           ports: 
             {{- toYaml . | nindent 12 }}
           {{- end }}
