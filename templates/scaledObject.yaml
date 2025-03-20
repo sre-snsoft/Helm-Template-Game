@@ -5,10 +5,17 @@ kind: ScaledObject
 metadata:
   name: {{ .name }}-keda
   namespace: {{ $.Values.global.namespace }}
+  annotations:
+    scaledobject.keda.sh/transfer-hpa-ownership: "true"
 spec:
   scaleTargetRef:
+  {{- if .rollout.enabled }}
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout 
+  {{- else }}
     apiVersion: apps/v1
     kind: Deployment
+  {{- end }}
     name: {{ .name }}-server
   minReplicaCount: {{ .scaledObject.minReplicaCount }}
   maxReplicaCount: {{ .scaledObject.maxReplicaCount }}

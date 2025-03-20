@@ -1,13 +1,48 @@
 {{- range .Values.microservices }}
   {{- $microservice := . }}
 {{- $labels := dict "app.kubernetes.io/instance" (printf "%s-server" $microservice.name | lower) "app.kubernetes.io/name" (printf "%s-server" $microservice.name | lower) }}
+
+{{- if .rollout.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+{{- else }}
 apiVersion: apps/v1
 kind: Deployment
+{{- end }}
 metadata:
   labels: {{ $labels | toYaml | nindent 4 }}
   name: {{ $microservice.name | lower }}-server
   namespace: {{ $.Values.global.namespace }}
 spec:
+  {{- if .rollout.enabled }}
+  strategy:
+    canary:
+      canaryService: {{ .rollout.canaryService }}
+      stableService: {{ .rollout.stableService }}
+      trafficRouting:
+        managedRoutes:
+          - name: set-header-{{ .name | lower }}
+        apisix:
+          route:
+            name: {{ .rollout.apisixRoute }}
+            rules:
+              - {{ .rollout.apisixRules }}
+      steps:
+        - setCanaryScale:
+            weight: {{ .rollout.setCanaryScaleWeight }}
+          setHeaderRoute:
+            match:
+              - headerName: true-client-ip
+                headerValue:
+                  regex: "^202\\.186\\.4\\.176$"
+            name: set-header-{{ .name | lower }}
+        - pause: {}
+        - setCanaryScale:
+            matchTrafficWeight: true
+      {{- with .rollout.stepsSetWeight }}
+        {{- toYaml . | nindent 8}}
+      {{- end }}
+  {{- end }}
   {{- with .progressDeadlineSeconds }}
   progressDeadlineSeconds: {{ . }}
   {{- end }}
@@ -17,11 +52,13 @@ spec:
   revisionHistoryLimit: {{ .revisionHistoryLimit | default 3 }}
   selector:
     matchLabels: {{ $labels | toYaml | nindent 6 }}
+  {{- if not .rollout.enabled }}
   strategy:
     rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
+      maxSurge: {{ .maxSurge }}
+      maxUnavailable: {{ .maxUnavailable }}
     type: RollingUpdate
+  {{- end }}
   template:
     metadata:
       labels:
@@ -35,6 +72,9 @@ spec:
       {{- with .nodeSelector }}
       nodeSelector: 
         {{- toYaml . | nindent 8}}
+      {{- end }}
+      {{- with .serviceAccountName }}
+      serviceAccountName: {{ . }}
       {{- end }}
       containers:
         - name: {{ $microservice.name | lower }}
