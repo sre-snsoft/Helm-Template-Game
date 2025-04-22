@@ -16,12 +16,16 @@ spec:
   clusterIP: "{{ . }}"
   {{- end }}
   ports:
+  {{- with .extraPort }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
     - port: {{ .port }}
       {{- with .portName }}
       name: {{ . }}
       {{- end }}
       targetPort: {{ .targetPort | default .port }}
       protocol: {{ .protocol | default "TCP" }}
+
   selector:
     app.kubernetes.io/name: {{ $microservice.name | lower }}-server
 ---
