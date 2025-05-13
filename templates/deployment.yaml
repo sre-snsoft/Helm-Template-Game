@@ -34,7 +34,7 @@ spec:
             match:
               - headerName: true-client-ip
                 headerValue:
-                  regex: "^202\\.186\\.4\\.176$"
+                  regex: {{ .rollout.setHeaderRoute.headerValue }}
             name: set-header-{{ .name | lower }}
         - pause: {}
         - setCanaryScale:
