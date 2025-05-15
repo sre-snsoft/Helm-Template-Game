@@ -27,6 +27,9 @@ spec:
             name: {{ .rollout.apisixRoute }}
             rules:
               - {{ .rollout.apisixRules }}
+      {{- if .rollout.maxUnavailable }}
+      maxUnavailable: {{ .rollout.maxUnavailable }}
+      {{- end }}
       steps:
         - setCanaryScale:
             weight: {{ .rollout.setCanaryScaleWeight }}
@@ -70,7 +73,7 @@ spec:
       {{- end }}
     spec:
       {{- with .nodeSelector }}
-      nodeSelector: 
+      nodeSelector:
         {{- toYaml . | nindent 8}}
       {{- end }}
       {{- with .serviceAccountName }}
@@ -81,11 +84,11 @@ spec:
           image: "{{ $.Values.global.ecr }}/{{ .ecrName }}:{{ .imageTag }}"
           imagePullPolicy: Always
           {{- with .command }}
-          command:  
+          command:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .args }}
-          args: 
+          args:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .ports }}
@@ -93,7 +96,7 @@ spec:
             preStop:
               exec:
                 command: ["sleep", "5"]
-          ports: 
+          ports:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- if .startupProbe.enabled }}
