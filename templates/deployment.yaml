@@ -134,6 +134,10 @@ spec:
           {{- end }}
       {{- with .dnsPolicy }}
       dnsPolicy: {{ . }}
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
       {{- end }}
       {{- with .restartPolicy }}
       restartPolicy: {{ . }}
