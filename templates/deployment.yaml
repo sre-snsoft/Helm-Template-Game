@@ -145,7 +145,7 @@ spec:
           {{- end }}
       {{- with .dnsPolicy }}
       dnsPolicy: {{ . }}
-      {{- end }}s
+      {{- end }}
       dnsConfig:
         options:
         - name: ndots
