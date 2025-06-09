@@ -32,6 +32,12 @@ spec:
       maxUnavailable: {{ .rollout.maxUnavailable }}
       {{- end }}
       steps:
+        - setHeaderRoute:
+            match:
+              - headerName: true-client-ip
+                headerValue:
+                  regex: {{ .rollout.setHeaderRoute.headerValue }}
+            name: set-header-{{ .name | lower }}
         - setCanaryScale:
           {{- with .rollout.setCanaryScaleWeight }}
             weight: {{- toYaml . | nindent 12 }}
@@ -42,12 +48,6 @@ spec:
           {{- with .rollout.matchTrafficWeight }}
             matchTrafficWeight: {{ . }}
           {{- end }}
-        - setHeaderRoute:
-            match:
-              - headerName: true-client-ip
-                headerValue:
-                  regex: {{ .rollout.setHeaderRoute.headerValue }}
-            name: set-header-{{ .name | lower }}
       {{- with .rollout.stepsSetWeight }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
