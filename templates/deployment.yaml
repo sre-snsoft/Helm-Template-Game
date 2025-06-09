@@ -42,7 +42,7 @@ spec:
           {{- with .rollout.matchTrafficWeight }}
             matchTrafficWeight: {{ . }}
           {{- end }}
-          setHeaderRoute:
+        - setHeaderRoute:
             match:
               - headerName: true-client-ip
                 headerValue:
