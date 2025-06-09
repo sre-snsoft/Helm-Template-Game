@@ -3,92 +3,92 @@ entries:
   game-chart:
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-06-06T16:56:17.397478+08:00"
+    created: "2025-06-09T15:55:13.877661+08:00"
     description: A Helm chart for Kubernetes
     digest: 0ac82392adceb3fd618e9dc74d56bd494ab45e955d41e8ef2b0ab67d0f34633b
     name: game-chart
     type: application
     urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-6.9.tgz
+    - https://sre-snsof.github.io/Helm-Template-Game/game-chart-6.9.tgz
     version: "6.9"
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-06-06T16:56:17.39673+08:00"
+    created: "2025-06-09T15:55:13.876737+08:00"
     description: A Helm chart for Kubernetes
     digest: 3b58c99fd18f2c2af25482b52bb1f96dd4aa7370277fc2d9017ff551efa4a16e
     name: game-chart
     type: application
     urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-6.6.tgz
+    - https://sre-snsof.github.io/Helm-Template-Game/game-chart-6.6.tgz
     version: "6.6"
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-06-06T16:56:17.395454+08:00"
+    created: "2025-06-09T15:55:13.875518+08:00"
     description: Helm Chart for EGAME
-    digest: 286711b048bde2cf0bde3e88f571c2c567625a2ce03b6ae85119995bd6cc1722
+    digest: 9786d7cb43b01b0427bc10bbcedee991652b91d6985644826716d3722d9b5316
     name: game-chart
     type: application
     urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.73.tgz
+    - https://sre-snsof.github.io/Helm-Template-Game/game-chart-0.0.73.tgz
     version: 0.0.73
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-06-06T16:56:17.385685+08:00"
+    created: "2025-06-09T15:55:13.856844+08:00"
     description: A Helm chart for Kubernetes
     digest: 78fa9105277d65d8cd210a31cd8ddd853520f81d8d53a881ccaa00f15663ca29
     name: game-chart
     type: application
     urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.72.tgz
+    - https://sre-snsof.github.io/Helm-Template-Game/game-chart-0.0.72.tgz
     version: 0.0.72
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-06-06T16:56:17.381704+08:00"
+    created: "2025-06-09T15:55:13.852652+08:00"
     description: A Helm chart for Kubernetes
     digest: 21951a07fdce2086c594253f35d6c1ead576a94d8baf2f0cdffe59cfec79ac37
     name: game-chart
     type: application
     urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.71.tgz
+    - https://sre-snsof.github.io/Helm-Template-Game/game-chart-0.0.71.tgz
     version: 0.0.71
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-06-06T16:56:17.37952+08:00"
+    created: "2025-06-09T15:55:13.849743+08:00"
     description: A Helm chart for Kubernetes
     digest: 61b74866469992fb89089faab1af3515dce934efb8322418de0198a59568573f
     name: game-chart
     type: application
     urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.70.tgz
+    - https://sre-snsof.github.io/Helm-Template-Game/game-chart-0.0.70.tgz
     version: 0.0.70
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-06-06T16:56:17.377519+08:00"
+    created: "2025-06-09T15:55:13.847034+08:00"
     description: A Helm chart for Kubernetes
     digest: cd3e67ea108d5db36020d0519d826ba032dde2173c486e1283a7e5f0750d7002
     name: game-chart
     type: application
     urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.66.tgz
+    - https://sre-snsof.github.io/Helm-Template-Game/game-chart-0.0.66.tgz
     version: 0.0.66
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-06-06T16:56:17.376434+08:00"
+    created: "2025-06-09T15:55:13.845798+08:00"
     description: A Helm chart for Kubernetes
     digest: 0f5a75437a1fe8993f5fd28a34f34f25027e0a123a23c536083f89d87d3d5405
     name: game-chart
     type: application
     urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.2.tgz
+    - https://sre-snsof.github.io/Helm-Template-Game/game-chart-0.0.2.tgz
     version: 0.0.2
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-06-06T16:56:17.37598+08:00"
+    created: "2025-06-09T15:55:13.845306+08:00"
     description: A Helm chart for Kubernetes
     digest: 8220f730b42cacbf6988d783505541341a9a819c74289940cb2281817df3801f
     name: game-chart
     type: application
     urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.1.tgz
+    - https://sre-snsof.github.io/Helm-Template-Game/game-chart-0.0.1.tgz
     version: 0.0.1
-generated: "2025-06-06T16:56:17.375187+08:00"
+generated: "2025-06-09T15:55:13.844646+08:00"

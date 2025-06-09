@@ -34,10 +34,13 @@ spec:
       steps:
         - setCanaryScale:
           {{- with .rollout.setCanaryScaleWeight }}
-          weight: {{- toYaml . | nindent 12 }}
+            weight: {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .rollout.setCanaryScaleReplica }}
-          replicas: {{ . }}
+            replicas: {{ . }}
+          {{- end }}
+          {{- with .rollout.matchTrafficWeight }}
+            matchTrafficWeight: {{ . }}
           {{- end }}
           setHeaderRoute:
             match:
@@ -45,11 +48,6 @@ spec:
                 headerValue:
                   regex: {{ .rollout.setHeaderRoute.headerValue }}
             name: set-header-{{ .name | lower }}
-        - pause: {}
-        {{- with .rollout.matchTrafficWeight }}
-        - setCanaryScale:
-            matchTrafficWeight: {{- toYaml . | nindent 12 }}
-        {{- end }}
       {{- with .rollout.stepsSetWeight }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
