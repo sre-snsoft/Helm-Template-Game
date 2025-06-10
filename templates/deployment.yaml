@@ -102,7 +102,9 @@ spec:
           {{- end }}
           {{- with .lifecycle }}
           lifecycle:
-            {{ . }}
+            preStop:
+              exec:
+                command: {{ . }}
           {{- end }}
           {{- with .ports }}
           ports:
