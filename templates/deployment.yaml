@@ -100,11 +100,11 @@ spec:
           args:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .ports }}
+          {{- with .lifecycle }}
           lifecycle:
-            preStop:
-              exec:
-                command: ["sleep", "5"]
+            {{ . }}
+          {{- end }}
+          {{- with .ports }}
           ports:
             {{- toYaml . | nindent 12 }}
           {{- end }}
