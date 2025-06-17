@@ -89,9 +89,11 @@ spec:
         - name: {{ $microservice.name | lower }}
           image: "{{ $.Values.global.ecr }}/{{ .ecrName }}:{{ .imageTag }}"
           imagePullPolicy: Always
+          {{- with .securityContext }}
           securityContext:
-            privileged: {{ .securityContext.privileged }}
-            runAsUser: {{ .securityContext.runAsUser }}
+            privileged: {{ .privileged }}
+            runAsUser: {{ .runAsUser }}
+          {{- end }}
           {{- with .command }}
           command:
             {{- toYaml . | nindent 12 }}
