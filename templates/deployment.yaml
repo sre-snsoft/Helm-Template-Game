@@ -40,7 +40,7 @@ spec:
             name: set-header-{{ .name | lower }}
         - setCanaryScale:
           {{- with .rollout.setCanaryScaleWeight }}
-            weight: {{- toYaml . | nindent 12 }}
+            weight: {{ . }}
           {{- end }}
           {{- with .rollout.setCanaryScaleReplica }}
             replicas: {{ . }}
