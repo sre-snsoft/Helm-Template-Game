@@ -19,14 +19,12 @@ spec:
       canaryService: {{ .rollout.canaryService }}
       stableService: {{ .rollout.stableService }}
       trafficRouting:
-        {{- if eq .rollout.trafficRouting "alb" }}
-        # ALB traffic routing configuration
+        {{- if eq .rollout.trafficRoutingType "alb" }}
         alb:
           ingress: {{ .rollout.ingress }}
           rootService: {{ .rollout.rootService }}
-          servicePort: {{ .rollout.servicePort | default 443 }}
-        {{- else }}
-        # Default to APIsix traffic routing if it's not ALB
+          servicePort: {{ .rollout.servicePort }}
+        {{- else if eq .rollout.trafficRoutingType "apisix" }}
         apisix:
           route:
             name: {{ .rollout.apisixRoute }}
