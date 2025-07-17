@@ -19,7 +19,7 @@ spec:
       canaryService: {{ .rollout.canaryService }}
       stableService: {{ .rollout.stableService }}
       trafficRouting:
-        {{- if rollout.alb.enabled }}
+        {{- if .rollout.alb.enabled }}
         # ALB traffic routing configuration
         alb:
           ingress: {{ .rollout.alb.ingress }}
