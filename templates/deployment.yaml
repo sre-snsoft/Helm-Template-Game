@@ -31,9 +31,11 @@ spec:
             rules:
               {{- with .rollout.apisixRules }}
                 {{- toYaml . | nindent 12 }}
+              {{- end }}
+        {{- end }}
+        {{- if eq .rollout.trafficRoutingType "apisix" }}
         managedRoutes:
           - name: set-header-{{ .name | lower }}
-              {{- end }}
         {{- end }}
       {{- if .rollout.maxUnavailable }}
       maxUnavailable: {{ .rollout.maxUnavailable }}
