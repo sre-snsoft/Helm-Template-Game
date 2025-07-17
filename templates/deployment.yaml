@@ -24,7 +24,7 @@ spec:
         alb:
           ingress: {{ .rollout.alb.ingress }}
           rootService: {{ .rollout.alb.rootService }}
-          servicePort: {{ .rollout.alb.servicePort }}
+          servicePort: {{ .rollout.alb.servicePort | default 443 }}
         {{- else }}
         # Default to APIsix traffic routing if it's not ALB
         apisix:
@@ -34,21 +34,21 @@ spec:
               {{- with .rollout.apisixRules }}
                 {{- toYaml . | nindent 12 }}
               {{- end }}
-        {{- end }}
         managedRoutes:
           - name: set-header-{{ .name | lower }}
+        {{- end }}
       {{- if .rollout.maxUnavailable }}
       maxUnavailable: {{ .rollout.maxUnavailable }}
       {{- end }}
       steps:
-        {{- with .rollout.setHeaderRoute.headerValue }}
+      {{- if .rollout.setHeaderRoute }}
         - setHeaderRoute:
             match:
               - headerName: true-client-ip
                 headerValue:
                   regex: {{ .rollout.setHeaderRoute.headerValue }}
             name: set-header-{{ .name | lower }}
-        {{- end }}
+      {{- end }}
         - setCanaryScale:
           {{- with .rollout.setCanaryScaleWeight }}
             weight: {{ . }}

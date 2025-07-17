@@ -1,0 +1,150 @@
+global:
+  namespace: qat-slotgame
+  env: qat
+  ecr: 235494821046.dkr.ecr.ap-southeast-1.amazonaws.com
+  secret:
+    enabled: true
+    token: aHZzLlV0bFR2VTA5MlBLVUdkRDBwaHg4RHlZcA==
+  serviceAccount:
+    enabled: false
+microservices:
+  - name: gateway
+    imageTag: v1.1.111
+    annotations:
+      karpenter.sh/do-not-disrupt: "true"
+    rollout:
+      enabled: true
+      canaryService: gateway-canary
+      stableService: gateway-stable
+      alb:
+        enabled: true
+        ingress: gateway-ingress
+        rootService: gateway-stable
+        servicePort: 8845
+      setCanaryScaleWeight: 2
+      setHeaderRoute:
+        headerValue: "96\\.0\\.147\\.(31|113)|18\\.136\\.28\\.148"
+      stepsSetWeight:
+        - setWeight: 10
+        - pause: {}
+        - setWeight: 30
+        - pause: {}
+        - setWeight: 60
+        - pause: {}
+        - setWeight: 100
+        - pause: { duration: 30m }
+    ecrName: gateway
+    replica: 20
+    progressDeadlineSeconds: 600
+    maxSurge: 0
+    maxUnavailable: 2
+    scaledObject:
+      enabled: false
+      minReplicaCount: 0
+      maxReplicaCount: 20
+      scaleUp:
+        stabilizationWindowSeconds: 5
+        selectPolicy: Max
+        pod:
+          podNumber: 10
+          seconds: 30
+        percent:
+          percentage: 100
+          seconds: 60
+        extraPolicies: []
+      scaleDown:
+        stabilizationWindowSeconds: 300
+        selectPolicy: Min
+        pod:
+          podNumber: 4
+          seconds: 60
+        percent:
+          percentage: 50
+          seconds: 60
+        extraPolicies: []
+      cronOne:
+        start: 00 08 * * *
+        end: 00 19 * * *
+        desiredReplicas: 20
+      cronTwo:
+        start: 00 19 * * *
+        end: 00 23 * * *
+        desiredReplicas: 20
+      cpu:
+        utilization: 60
+    nodeSelector:
+      role: karpenter
+    command:
+      - "./gateway"
+    args:
+      - "-a"
+      - "http://vault-ui.qat-vault.svc.cluster.local/"
+      - "-t"
+      - "$(VAULT_TOKEN)"
+      - "-p"
+      - "v1/spin_master/data/gateway"
+    ports:
+      - containerPort: 8090
+        name: grpc
+        protocol: TCP
+      - containerPort: 6060
+        name: pprof
+        protocol: TCP
+    env:
+      - name: OTEL_RESOURCE_ATTRIBUTES
+        value: "service.name=crystal_rush_qat_gateway,service.version=1,deployment.environment=qat"
+      - name: OTEL_EXPORTER_OTLP_INSECURE
+        value: "true"
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/traces"
+      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+        value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/metrics"
+      - name: VAULT_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: vault-token
+            key: VAULT_TOKEN
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    workingDir: /gateway
+    dnsPolicy: ClusterFirst
+    restartPolicy: Always
+    terminationGracePeriodSeconds: 15
+    limits:
+      cpu: "2"
+      memory: 2000Mi
+    requests:
+      cpu: "2"
+      memory: 2000Mi
+    startupProbe:
+      enabled: false
+    readinessProbe:
+      enabled: true
+      method: httpGet
+      path: /ping
+      port: 8845
+      initialDelaySeconds: 5
+      periodSeconds: 30
+      successThreshold: 1
+      failureThreshold: 3
+      timeoutSeconds: 10
+    livenessProbe:
+      enabled: true
+      method: httpGet
+      path: /ping
+      port: 8845
+      initialDelaySeconds: 10
+      periodSeconds: 30
+      successThreshold: 1
+      failureThreshold: 3
+      timeoutSeconds: 3
+    ndots:
+      value: 1
+    services:
+      # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
+      - name: gateway-stable
+        port: 8845
+      - name: gateway-canary
+        port: 8845
+    ingress:
+      enabled: false
