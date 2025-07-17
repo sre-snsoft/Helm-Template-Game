@@ -35,6 +35,11 @@ spec:
                 {{- toYaml . | nindent 12 }}
               {{- end }}
         {{- end }}
+        managedRoutes:
+          - name: set-header-{{ .name | lower }}
+      {{- if .rollout.maxUnavailable }}
+      maxUnavailable: {{ .rollout.maxUnavailable }}
+      {{- end }}
       steps:
         - setHeaderRoute:
             match:
