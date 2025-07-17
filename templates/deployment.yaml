@@ -41,12 +41,14 @@ spec:
       maxUnavailable: {{ .rollout.maxUnavailable }}
       {{- end }}
       steps:
+        {{- with .rollout.setHeaderRoute.headerValue }}
         - setHeaderRoute:
             match:
               - headerName: true-client-ip
                 headerValue:
                   regex: {{ .rollout.setHeaderRoute.headerValue }}
             name: set-header-{{ .name | lower }}
+        {{- end }}
         - setCanaryScale:
           {{- with .rollout.setCanaryScaleWeight }}
             weight: {{ . }}
