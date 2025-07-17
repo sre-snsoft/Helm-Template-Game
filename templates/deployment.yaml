@@ -30,7 +30,7 @@ spec:
         apisix:
           route:
             name: {{ .rollout.apisixRoute }}
-            rules: {{- .rollout.apisixRules }}
+            rules: {{ .rollout.apisixRules }}
         managedRoutes:
           - name: set-header-{{ .name | lower }}
         {{- end }}
