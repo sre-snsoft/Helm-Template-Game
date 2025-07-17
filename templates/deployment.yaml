@@ -19,12 +19,14 @@ spec:
       canaryService: {{ .rollout.canaryService }}
       stableService: {{ .rollout.stableService }}
       trafficRouting:
-        {{- if eq .rollout.trafficRoutingType "alb" }}
+        {{- if rollout.alb.enabled }}
+        # ALB traffic routing configuration
         alb:
-          ingress: {{ .rollout.ingress }}
-          rootService: {{ .rollout.rootService }}
-          servicePort: {{ .rollout.servicePort }}
-        {{- else if eq .rollout.trafficRoutingType "apisix" }}
+          ingress: {{ .rollout.alb.ingress }}
+          rootService: {{ .rollout.alb.rootService }}
+          servicePort: {{ .rollout.alb.servicePort }}
+        {{- else }}
+        # Default to APIsix traffic routing if it's not ALB
         apisix:
           route:
             name: {{ .rollout.apisixRoute }}
@@ -33,10 +35,8 @@ spec:
                 {{- toYaml . | nindent 12 }}
               {{- end }}
         {{- end }}
-        {{- if eq .rollout.trafficRoutingType "apisix" }}
         managedRoutes:
           - name: set-header-{{ .name | lower }}
-        {{- end }}
       {{- if .rollout.maxUnavailable }}
       maxUnavailable: {{ .rollout.maxUnavailable }}
       {{- end }}
