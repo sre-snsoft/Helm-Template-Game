@@ -30,7 +30,10 @@ spec:
         apisix:
           route:
             name: {{ .rollout.apisixRoute }}
-            rules: {{ .rollout.apisixRules }}
+            rules:
+              {{- with .rollout.apisixRules }}
+                {{- toYaml . | nindent 14 }}
+              {{- end }}
         managedRoutes:
           - name: set-header-{{ .name | lower }}
         {{- end }}

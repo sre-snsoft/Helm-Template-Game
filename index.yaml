@@ -3,12 +3,12 @@ entries:
   game-chart:
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-17T18:01:35.541672+08:00"
+    created: "2025-07-17T18:11:15.779186+08:00"
     description: Helm Chart
-    digest: 51d8e411e3318327b56b42ef87c50cecdc8b47cbabc67a50e7a0038e8c52974b
+    digest: 9769469fb1d07cacd9c8e744d1e8059f6fe30c269ac8f3689edfd857359d02de
     name: game-chart
     type: application
     urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.95.tgz
-    version: 0.0.95
-generated: "2025-07-17T18:01:35.536359+08:00"
+    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.96.tgz
+    version: 0.0.96
+generated: "2025-07-17T18:11:15.774987+08:00"
