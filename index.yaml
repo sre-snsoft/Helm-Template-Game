@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  game-aliyun-chart:
+  - apiVersion: v2
+    appVersion: "1.0"
+    created: "2025-07-18T14:30:59.300613+08:00"
+    description: Helm Chart
+    digest: bced44a4b4a6e4d14d52f41b0ef18c7a67f850d2a65359f38716aa2897960a51
+    name: game-aliyun-chart
+    type: application
+    urls:
+    - https://sre-snsoft.github.io/Helm-Template-Game/game-aliyun-chart-0.0.2.tgz
+    version: 0.0.2
   game-chart:
   - apiVersion: v2
     appVersion: "1.0"
@@ -31,126 +42,6 @@ entries:
     urls:
     - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.101.tgz
     version: 0.0.101
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.996557+08:00"
-    description: Helm Chart
-    digest: 9769469fb1d07cacd9c8e744d1e8059f6fe30c269ac8f3689edfd857359d02de
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.96.tgz
-    version: 0.0.96
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.994536+08:00"
-    description: Helm Chart
-    digest: 51d8e411e3318327b56b42ef87c50cecdc8b47cbabc67a50e7a0038e8c52974b
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.95.tgz
-    version: 0.0.95
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.992421+08:00"
-    description: Helm Chart
-    digest: 92532b4388b33c3a88ff5b3af7e3ffda4c90838f4a24259f2cfedf2cd65c5734
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.94.tgz
-    version: 0.0.94
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.989961+08:00"
-    description: Helm Chart
-    digest: b033709b06e52204a4955b1698de54a8842285af8a506200d0fa3ba72af47765
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.93.tgz
-    version: 0.0.93
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.987339+08:00"
-    description: Helm Chart
-    digest: 2973ada6ea6a95d28a2b07d81e89b05f96cdf97d1fbf5bc3c20ac59979224686
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.92.tgz
-    version: 0.0.92
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.986234+08:00"
-    description: Helm Chart
-    digest: 23f4f916b9654f514bd34f5fe4e6bb6e3261cc1ffe62fe6db094551eec0919f5
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.91.tgz
-    version: 0.0.91
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.985933+08:00"
-    description: Helm Chart
-    digest: d1efe8265ccc8c9c37cf6ecf26bdad1b4076fb86f904220d6ce45f2079f412f5
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.90.tgz
-    version: 0.0.90
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.985724+08:00"
-    description: Helm Chart
-    digest: 9947bc9ab9bad237350fef4ba7a6d2bd1a1fd6163b4d6eb27aa080f9635455f7
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.89.tgz
-    version: 0.0.89
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.985517+08:00"
-    description: Helm Chart
-    digest: 1185c7465cb418d3e63520983fa129b8b24a7d0834bdec147035e345faa61795
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.88.tgz
-    version: 0.0.88
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.985304+08:00"
-    description: Helm Chart
-    digest: 35cadfd6b98f830f048a4150532a1c90a0893af62588602f613ad465d91ea808
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.87.tgz
-    version: 0.0.87
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.985089+08:00"
-    description: Helm Chart
-    digest: 5f1a2cd659faaacdc1a8c7a10927f3eb03ff1f846b33cdbd9aa1c7de0d179ce0
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.86.tgz
-    version: 0.0.86
-  - apiVersion: v2
-    appVersion: "1.0"
-    created: "2025-07-18T12:26:17.984845+08:00"
-    description: Helm Chart
-    digest: ed169e5262946b2cf1cc6c6680a824d74ef4e7d9c3ac805499b531fd5ab40ba8
-    name: game-chart
-    type: application
-    urls:
-    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.85.tgz
-    version: 0.0.85
   - apiVersion: v2
     appVersion: "1.0"
     created: "2025-07-18T12:26:17.984591+08:00"
@@ -211,4 +102,4 @@ entries:
     urls:
     - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.1.tgz
     version: 0.0.1
-generated: "2025-07-18T12:26:17.971262+08:00"
+generated: "2025-07-18T14:30:59.299307+08:00"
