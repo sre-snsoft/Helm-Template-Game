@@ -55,16 +55,6 @@ spec:
             name: set-header-{{ .name | lower }}
         - pause: {}
       {{- end }}
-        - setCanaryScale:
-          {{- with .rollout.setCanaryScaleWeight }}
-            weight: {{ . }}
-          {{- end }}
-          {{- with .rollout.setCanaryScaleReplica }}
-            replicas: {{ . }}
-          {{- end }}
-          {{- with .rollout.matchTrafficWeight }}
-            matchTrafficWeight: {{ . }}
-          {{- end }}
       {{- with .rollout.stepsSetWeight }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

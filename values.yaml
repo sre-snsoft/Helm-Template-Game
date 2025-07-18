@@ -1,1288 +1,150 @@
-            global:
-              namespace: qat-slotgame
-              env: qat
-              ecr: 235494821046.dkr.ecr.ap-southeast-1.amazonaws.com
-              secret:
-                enabled: true
-                token: aHZzLlV0bFR2VTA5MlBLVUdkRDBwaHg4RHlZcA==
-              serviceAccount:
-                enabled: false
-            microservices:
-              - name: aggregation
-                imageTag: v1.0.155
-                ecrName: aggregation
-                progressDeadlineSeconds: 600
-                replica: 20
-                rollout:
-                  enabled: true
-                  alb:
-                    enabled: false
-                  canaryService: aggregation-canary-service
-                  stableService: aggregation-stable-service
-                  apisixRoute: apisix-route-aggregation
-                  apisixRules:
-                    - aggregation
-                  setCanaryScaleWeight: 2
-                  setHeaderRoute:
-                    headerValue: "96\\.0\\.147\\.(31|113)|18\\.136\\.28\\.148"
-                  stepsSetWeight:
-                    - setWeight: 10
-                    - pause: {}
-                    - setWeight: 30
-                    - pause: {}
-                    - setWeight: 60
-                    - pause: {}
-                    - setWeight: 100
-                    - pause: { duration: 30m}
-                maxSurge: 0
-                maxUnavailable: 2
-                scaledObject:
-                  enabled: false
-                  minReplicaCount: 0
-                  maxReplicaCount: 20
-                  scaleUp:
-                    stabilizationWindowSeconds: 30
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 30
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 00 19 * * *
-                    desiredReplicas: 20
-                    metricType: Value
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 20
-                    metricType: Value
-                  cpu:
-                    utilization: 60
-                nodeSelector:
-                  role: karpenter
-                command:
-                  - "./aggregation"
-                args:
-                  - "-a"
-                  - "http://vault-ui.qat-vault.svc.cluster.local/"
-                  - "-t"
-                  - "$(VAULT_TOKEN)"
-                  - "-p"
-                  - "v1/spin_master/data/aggregation"
-                ports:
-                  - containerPort: 18020
-                    name: grpc
-                    protocol: TCP
-                  - containerPort: 6060
-                    name: pprof
-                    protocol: TCP
-                env:
-                  - name: OTEL_LOGS_EXPORTER
-                    value: "none"
-                  - name: OTEL_RESOURCE_ATTRIBUTES
-                    value: "service.name=crystal_rush_qat_aggregation,service.version=1,deployment.environment=qat"
-                  - name: OTEL_EXPORTER_OTLP_INSECURE
-                    value: "true"
-                  - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-                    value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/traces"
-                  - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-                    value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/metrics"
-                  - name: VAULT_TOKEN
-                    valueFrom:
-                      secretKeyRef:
-                        name: vault-token
-                        key: VAULT_TOKEN
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-                workingDir: /aggregation
-                dnsPolicy: ClusterFirst
-                restartPolicy: Always
-                terminationGracePeriodSeconds: 15
-                limits:
-                  cpu: '2'
-                  memory: 2000Mi
-                requests:
-                  cpu: '2'
-                  memory: 2000Mi
-                startupProbe:
-                  enabled: false
-                readinessProbe:
-                  enabled: true
-                  method: exec
-                  command:
-                    - /bin/grpc_health_probe
-                    - -addr=:18020
-                    - -rpc-timeout=5s
-                  initialDelaySeconds: 5
-                livenessProbe:
-                  enabled: true
-                  method: exec
-                  command:
-                    - /bin/grpc_health_probe
-                    - -addr=:18020
-                    - -rpc-timeout=5s
-                  initialDelaySeconds: 10
-                ndots:
-                  value: 1
-                services:
-                  # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
-                  - name: aggregation-stable-service
-                    port: 18020
-                  - name: aggregation-canary-service
-                    port: 18020
-                ingress:
-                  enabled: false
-              - name: cronjob
-                imageTag: v0.0.20
-                ecrName: cronjob
-                progressDeadlineSeconds: 600
-                rollout:
-                  enabled: false
-                  alb:
-                    enabled: false
-                maxSurge: 0
-                maxUnavailable: 1
-                replica: 1
-                scaledObject:
-                  enabled: false
-                  minReplicaCount: 0
-                  maxReplicaCount: 20
-                  scaleUp:
-                    stabilizationWindowSeconds: 5
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 300
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 00 19 * * *
-                    desiredReplicas: 1
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 1
-                  cpu:
-                    utilization: 60
-                nodeSelector:
-                  role: karpenter
-                command:
-                  - "./cronJob"
-                args:
-                  - "-a"
-                  - "http://vault-ui.qat-vault.svc.cluster.local/"
-                  - "-t"
-                  - "$(VAULT_TOKEN)"
-                  - "-p"
-                  - "v1/spin_master/data/cronJob"
-                env:
-                  - name: OTEL_TRACES_EXPORTER
-                    value: "none"
-                  - name: VAULT_TOKEN
-                    valueFrom:
-                      secretKeyRef:
-                        name: vault-token
-                        key: VAULT_TOKEN
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-                terminationGracePeriodSeconds: 15
-                workingDir: /cronJob
-                dnsPolicy: ClusterFirst
-                restartPolicy: Always
-                limits:
-                  cpu: '500m'
-                  memory: 500Mi
-                requests:
-                  cpu: '500m'
-                  memory: 500Mi
-                startupProbe:
-                  enabled: false
-                readinessProbe:
-                  enabled: false
-                livenessProbe:
-                  enabled: false
-                ndots:
-                  value: 1
-                services:
-                  # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
-                  - name: cronjob-pprof
-                    port: 6060
-                    clusterIP: None
-                ingress:
-                  enabled: true
-                  backendService: cronjob-pprof
-                  port: 6060
-                  annotations:
-                    alb.ingress.kubernetes.io/scheme: internet-facing
-                    alb.ingress.kubernetes.io/target-type: ip
-                    alb.ingress.kubernetes.io/backend-protocol: HTTP
-              - name: game-admin
-                imageTag: v1.1.68
-                ecrName: game-admin
-                replica: 1
-                rollout:
-                  enabled: false
-                  alb:
-                    enabled: false
-                scaledObject:
-                  enabled: false
-                  minReplicaCount: 0
-                  maxReplicaCount: 20
-                  scaleUp:
-                    stabilizationWindowSeconds: 5
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 300
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 00 19 * * *
-                    desiredReplicas: 1
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 1
-                  cpu:
-                    utilization: 60
-                  minReplicaCount: 0
-                  maxReplicaCount: 2
-                  scaleUp:
-                    stabilizationWindowSeconds: 5
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 3600
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 00 19 * * *
-                    desiredReplicas: 1
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 1
-                  cpu:
-                    utilization: 60
-                nodeSelector:
-                  role: karpenter
-                ports:
-                  - containerPort: 80
-                terminationGracePeriodSeconds: 20
-                limits:
-                  cpu: '200m'
-                  memory : 200Mi
-                requests:
-                  cpu: '200m'
-                  memory: 100Mi
-                startupProbe:
-                  enabled: false
-                readinessProbe:
-                  enabled: true
-                  method: httpGet
-                  path: /
-                  port: 80
-                  initialDelaySeconds: 5
-                  periodSeconds: 10
-                  failureThreshold: 3
-                livenessProbe:
-                  enabled: true
-                  method: httpGet
-                  path: /
-                  port: 80
-                  initialDelaySeconds: 20
-                  periodSeconds: 20
-                  failureThreshold: 3
-                ndots:
-                  value: 1
-                services:
-                  # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
-                  - name: game-admin-tcp-service
-                    port: 80
-                    clusterIP: None
-                ingress:
-                  enabled: false
-              - name: gateway
-                imageTag: v1.1.111
-                annotations:
-                  karpenter.sh/do-not-disrupt: "true"
-                rollout:
-                  enabled: true
-                  canaryService: gateway-canary
-                  stableService: gateway-stable
-                  alb:
-                    enabled: true
-                    ingress: gateway-ingress
-                    rootService: gateway-stable
-                    servicePort: 8845
-                  setHeaderRoute:
-                    exact: 18.136.28.148
-                  setCanaryScaleWeight: 2
-                  matchTrafficWeight: true
-                  stepsSetWeight:
-                    - setWeight: 10
-                    - pause: {}
-                    - setWeight: 30
-                    - pause: {}
-                    - setWeight: 60
-                    - pause: {}
-                    - setWeight: 100
-                    - pause: { duration: 30m}
-                ecrName: gateway
-                replica: 20
-                progressDeadlineSeconds: 600
-                maxSurge: 0
-                maxUnavailable: 2
-                scaledObject:
-                  enabled: false
-                  minReplicaCount: 0
-                  maxReplicaCount: 20
-                  scaleUp:
-                    stabilizationWindowSeconds: 5
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 300
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 00 19 * * *
-                    desiredReplicas: 20
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 20
-                  cpu:
-                    utilization: 60
-                nodeSelector:
-                  role: karpenter
-                command:
-                  - "./gateway"
-                args:
-                  - "-a"
-                  - "http://vault-ui.qat-vault.svc.cluster.local/"
-                  - "-t"
-                  - "$(VAULT_TOKEN)"
-                  - "-p"
-                  - "v1/spin_master/data/gateway"
-                ports:
-                  - containerPort: 8090
-                    name: grpc
-                    protocol: TCP
-                  - containerPort: 6060
-                    name: pprof
-                    protocol: TCP
-                env:
-                  - name: OTEL_RESOURCE_ATTRIBUTES
-                    value: "service.name=crystal_rush_qat_gateway,service.version=1,deployment.environment=qat"
-                  - name: OTEL_EXPORTER_OTLP_INSECURE
-                    value: "true"
-                  - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-                    value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/traces"
-                  - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-                    value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/metrics"
-                  - name: VAULT_TOKEN
-                    valueFrom:
-                      secretKeyRef:
-                        name: vault-token
-                        key: VAULT_TOKEN
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-                workingDir: /gateway
-                dnsPolicy: ClusterFirst
-                restartPolicy: Always
-                terminationGracePeriodSeconds: 15
-                limits:
-                  cpu: '2'
-                  memory: 2000Mi
-                requests:
-                  cpu: '2'
-                  memory: 2000Mi
-                startupProbe:
-                  enabled: false
-                readinessProbe:
-                  enabled: true
-                  method: httpGet
-                  path: /ping
-                  port: 8845
-                  initialDelaySeconds: 5
-                  periodSeconds: 30
-                  successThreshold: 1
-                  failureThreshold: 3
-                  timeoutSeconds: 10
-                livenessProbe:
-                  enabled: true
-                  method: httpGet
-                  path: /ping
-                  port: 8845
-                  initialDelaySeconds: 10
-                  periodSeconds: 30
-                  successThreshold: 1
-                  failureThreshold: 3
-                  timeoutSeconds: 3
-                ndots:
-                  value: 1
-                services:
-                  # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
-                  - name: gateway-stable
-                    port: 8845
-                  - name: gateway-canary
-                    port: 8845
-                ingress:
-                  enabled: false
-              - name: judan
-                imageTag: v1.1.106
-                rollout:
-                  enabled: true
-                  alb:
-                    enabled: false
-                  canaryService: judan-canary-service
-                  stableService: judan-stable-service
-                  apisixRoute: apisix-route-judan
-                  apisixRules:
-                    - judan
-                  setCanaryScaleWeight: 2
-                  setHeaderRoute:
-                    headerValue: "96\\.0\\.147\\.(31|113)|18\\.136\\.28\\.148"
-                  stepsSetWeight:
-                    - setWeight: 10
-                    - pause: {}
-                    - setWeight: 30
-                    - pause: {}
-                    - setWeight: 60
-                    - pause: {}
-                    - setWeight: 100
-                    - pause: { duration: 30m}
-                ecrName: judan
-                replica: 20
-                progressDeadlineSeconds: 600
-                maxSurge: 0
-                maxUnavailable: 2
-                scaledObject:
-                  enabled: false
-                  minReplicaCount: 0
-                  maxReplicaCount: 20
-                  scaleUp:
-                    stabilizationWindowSeconds: 5
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 0
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 00 19 * * *
-                    desiredReplicas: 20
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 20
-                  cpu:
-                    utilization: 60
-                nodeSelector:
-                  role: karpenter
-                command:
-                  - "./judan"
-                args:
-                  - "-a"
-                  - "http://vault-ui.qat-vault.svc.cluster.local/"
-                  - "-t"
-                  - "$(VAULT_TOKEN)"
-                  - "-p"
-                  - "v1/spin_master/data/judan"
-                ports:
-                  - containerPort: 8090
-                    name: grpc
-                    protocol: TCP
-                  - containerPort: 6060
-                    name: pprof
-                    protocol: TCP
-                env:
-                  - name: OTEL_LOGS_EXPORTER
-                    value: "none"
-                  - name: OTEL_RESOURCE_ATTRIBUTES
-                    value: "service.name=crystal_rush_qat_judan,service.version=1,deployment.environment=qat"
-                  - name: OTEL_EXPORTER_OTLP_INSECURE
-                    value: "true"
-                  - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-                    value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/traces"
-                  - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-                    value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/metrics"
-                  - name: VAULT_TOKEN
-                    valueFrom:
-                      secretKeyRef:
-                        name: vault-token
-                        key: VAULT_TOKEN
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-                workingDir: /judan
-                dnsPolicy: ClusterFirst
-                restartPolicy: Always
-                terminationGracePeriodSeconds: 15
-                limits:
-                  cpu: '2'
-                  memory: 2000Mi
-                requests:
-                  cpu: '2'
-                  memory: 2000Mi
-                startupProbe:
-                  enabled: false
-                readinessProbe:
-                  enabled: true
-                  method: exec
-                  command:
-                    - /bin/grpc_health_probe
-                    - -addr=:8090
-                    - -rpc-timeout=5s
-                  initialDelaySeconds: 5
-                livenessProbe:
-                  enabled: true
-                  method: exec
-                  command:
-                    - /bin/grpc_health_probe
-                    - -addr=:8090
-                    - -rpc-timeout=5s
-                  initialDelaySeconds: 10
-                ndots:
-                  value: 1
-                services:
-                  # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
-                  - name: judan-stable-service
-                    port: 8090
-                  - name: judan-canary-service
-                    port: 8090
-                ingress:
-                  enabled: false
-              - name: restgateway
-                imageTag: v1.0.252
-                rollout:
-                  enabled: false
-                  alb:
-                    enabled: false
-                ecrName: restgateway
-                replica: 1
-                progressDeadlineSeconds: 600
-                maxSurge: 0
-                maxUnavailable: 1
-                scaledObject:
-                  enabled: false
-                  minReplicaCount: 0
-                  maxReplicaCount: 20
-                  scaleUp:
-                    stabilizationWindowSeconds: 5
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 300
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 00 19 * * *
-                    desiredReplicas: 1
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 1
-                  cpu:
-                    utilization: 60
-                nodeSelector:
-                  role: karpenter
-                command:
-                  - "./restGateway"
-                args:
-                  - "-a"
-                  - "http://vault-ui.qat-vault.svc.cluster.local/"
-                  - "-t"
-                  - "$(VAULT_TOKEN)"
-                  - "-p"
-                  - "v1/spin_master/data/restGateway"
-                ports:
-                  - containerPort: 18020
-                    name: grpc
-                    protocol: TCP
-                  - containerPort: 6060
-                    name: pprof
-                    protocol: TCP
-                env:
-                  - name: OTEL_TRACES_EXPORTER
-                    value: "none"
-                  - name: VAULT_TOKEN
-                    valueFrom:
-                      secretKeyRef:
-                        name: vault-token
-                        key: VAULT_TOKEN
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-                workingDir: /restGateway
-                dnsPolicy: ClusterFirst
-                restartPolicy: Always
-                terminationGracePeriodSeconds: 15
-                limits:
-                  cpu: '200m'
-                  memory: 500Mi
-                requests:
-                  cpu: '200m'
-                  memory: 50Mi
-                startupProbe:
-                  enabled: false
-                readinessProbe:
-                  enabled: true
-                  method: httpGet
-                  path: /ping
-                  port: 8080
-                  initialDelaySeconds: 30
-                  periodSeconds: 30
-                  successThreshold: 1
-                  failureThreshold: 3
-                  timeoutSeconds: 10
-                livenessProbe:
-                  enabled: true
-                  method: httpGet
-                  path: /ping
-                  port: 8080
-                  initialDelaySeconds: 30
-                  periodSeconds: 30
-                  successThreshold: 1
-                  failureThreshold: 3
-                  timeoutSeconds: 3
-                ndots:
-                  value: 1
-                services:
-                  # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
-                  - name: restgateway-tcp-service
-                    port: 8080
-                ingress:
-                  enabled: true
-                  backendService: restgateway-tcp-service
-                  port: 8080
-                  annotations:
-                    alb.ingress.kubernetes.io/scheme: internet-facing
-                    alb.ingress.kubernetes.io/target-type: ip
-                    alb.ingress.kubernetes.io/backend-protocol: HTTP
-              - name: rtpmanager
-                imageTag: v1.1.119
-                replica: 20
-                rollout:
-                    enabled: true
-                    alb:
-                      enabled: false
-                    canaryService: rtpmanager-canary-service
-                    stableService: rtpmanager-stable-service
-                    apisixRoute: apisix-route-rtpmanager
-                    apisixRules:
-                      - rtpmanager
-                    setCanaryScaleWeight: 2
-                    setHeaderRoute:
-                      headerValue: "96\\.0\\.147\\.(31|113)|18\\.136\\.28\\.148"
-                    stepsSetWeight:
-                      - setWeight: 10
-                      - pause: {}
-                      - setWeight: 30
-                      - pause: {}
-                      - setWeight: 60
-                      - pause: {}
-                      - setWeight: 100
-                      - pause: { duration: 30m}
-                ecrName: rtpmanager
-                progressDeadlineSeconds: 600
-                maxSurge: 0
-                maxUnavailable: 2
-                scaledObject:
-                  enabled: false
-                  minReplicaCount: 0
-                  maxReplicaCount: 20
-                  scaleUp:
-                    stabilizationWindowSeconds: 5
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 300
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 00 19 * * *
-                    desiredReplicas: 20
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 20
-                  cpu:
-                    utilization: 60
-                nodeSelector:
-                  role: karpenter
-                command:
-                  - "./rtpManager"
-                args:
-                  - "-a"
-                  - "http://vault-ui.qat-vault.svc.cluster.local/"
-                  - "-t"
-                  - "$(VAULT_TOKEN)"
-                  - "-p"
-                  - "v1/spin_master/data/rtpManager"
-                ports:
-                  - containerPort: 9000
-                    name: grpc
-                    protocol: TCP
-                env:
-                  - name: OTEL_LOGS_EXPORTER
-                    value: "none"
-                  - name: OTEL_RESOURCE_ATTRIBUTES
-                    value: "service.name=crystal_rush_qat_rtpmanager,service.version=1,deployment.environment=qat"
-                  - name: OTEL_EXPORTER_OTLP_INSECURE
-                    value: "true"
-                  - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-                    value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/traces"
-                  - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-                    value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/metrics"
-                  - name: VAULT_TOKEN
-                    valueFrom:
-                      secretKeyRef:
-                        name: vault-token
-                        key: VAULT_TOKEN
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-                workingDir: /rtpManager
-                dnsPolicy: ClusterFirst
-                restartPolicy: Always
-                terminationGracePeriodSeconds: 15
-                limits:
-                  cpu: '2'
-                  memory: 2000Mi
-                requests:
-                  cpu: '2'
-                  memory: 2000Mi
-                startupProbe:
-                  enabled: false
-                readinessProbe:
-                  enabled: true
-                  method: grpc
-                  port: 9000
-                  initialDelaySeconds: 5
-                  periodSeconds: 5
-                  timeoutSeconds: 30
-                livenessProbe:
-                  enabled: true
-                  method: grpc
-                  port: 9000
-                  initialDelaySeconds: 10
-                  periodSeconds: 5
-                  timeoutSeconds: 5
-                ndots:
-                  value: 1
-                services:
-                  # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
-                  - name: rtpmanager-stable-service
-                    port: 9000
-                  - name: rtpmanager-canary-service
-                    port: 9000
-                ingress:
-                  enabled: false
-              - name: slot
-                imageTag: v1.2.290
-                replica: 20
-                rollout:
-                  enabled: true
-                  alb:
-                    enabled: false
-                  canaryService: slot-canary-service
-                  stableService: slot-stable-service
-                  apisixRoute: apisix-route-slot
-                  apisixRules:
-                    - slot
-                  setCanaryScaleWeight: 2
-                  setHeaderRoute:
-                    headerValue: "96\\.0\\.147\\.(31|113)|18\\.136\\.28\\.148"
-                  stepsSetWeight:
-                    - setWeight: 10
-                    - pause: {}
-                    - setWeight: 30
-                    - pause: {}
-                    - setWeight: 60
-                    - pause: {}
-                    - setWeight: 100
-                    - pause: { duration: 30m}
-                ecrName: slot
-                progressDeadlineSeconds: 600
-                maxSurge: 0
-                maxUnavailable: 2
-                scaledObject:
-                  enabled: false
-                  minReplicaCount: 0
-                  maxReplicaCount: 20
-                  scaleUp:
-                    stabilizationWindowSeconds: 5
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 0
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 59 18 * * *
-                    desiredReplicas: 20
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 20
-                  cpu:
-                    utilization: 60
-                nodeSelector:
-                  role: karpenter
-                command:
-                  - "./slot"
-                args:
-                  - bakunawa
-                  - "-a"
-                  - "http://vault-ui.qat-vault.svc.cluster.local/"
-                  - "-t"
-                  - "$(VAULT_TOKEN)"
-                  - "-p"
-                  - "v1/spin_master/data/slot/slot004"
-                ports:
-                  - containerPort: 9001
-                    name: grpc
-                    protocol: TCP
-                  - containerPort: 6060
-                    name: pprof
-                    protocol: TCP
-                env:
-                  - name: OTEL_LOGS_EXPORTER
-                    value: "none"
-                  - name: OTEL_RESOURCE_ATTRIBUTES
-                    value: "service.name=crystal_rush_qat_slot,service.version=1,deployment.environment=qat"
-                  - name: OTEL_EXPORTER_OTLP_INSECURE
-                    value: "true"
-                  - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-                    value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/traces"
-                  - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-                    value: "http://tracing-analysis-dc-sg.aliyuncs.com/adapt_1hlahoc4rpc@830177c1a0e9f6f_1hlahoc4rpc@53df7ad2afe8301/api/otlp/metrics"
-                  - name: VAULT_TOKEN
-                    valueFrom:
-                      secretKeyRef:
-                        name: vault-token
-                        key: VAULT_TOKEN
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-                workingDir: /slot
-                dnsPolicy: ClusterFirst
-                restartPolicy: Always
-                terminationGracePeriodSeconds: 15
-                limits:
-                  cpu: '2'
-                  memory: 2000Mi
-                requests:
-                  cpu: '2'
-                  memory: 2000Mi
-                startupProbe:
-                  enabled: false
-                readinessProbe:
-                  enabled: true
-                  method: grpc
-                  port: 9001
-                  initialDelaySeconds: 5
-                  periodSeconds: 5
-                  timeoutSeconds: 30
-                livenessProbe:
-                  enabled: true
-                  method: grpc
-                  port: 9001
-                  initialDelaySeconds: 10
-                  periodSeconds: 5
-                  timeoutSeconds: 5
-                ndots:
-                  value: 1
-                services:
-                  # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
-                  - name: slot-stable-service
-                    port: 9001
-                  - name: slot-canary-service
-                    port: 9001
-                ingress:
-                  enabled: true
-                  backendService: slot-pprof-service
-                  port: 6060
-                  annotations:
-                    alb.ingress.kubernetes.io/scheme: internet-facing
-                    alb.ingress.kubernetes.io/target-type: ip
-                    alb.ingress.kubernetes.io/backend-protocol: HTTP
-              - name: worker
-                imageTag: v0.0.18
-                rollout:
-                  enabled: false
-                  alb:
-                    enabled: false
-                ecrName: worker
-                replica: 10
-                progressDeadlineSeconds: 600
-                maxSurge: 0
-                maxUnavailable: 1
-                scaledObject:
-                  enabled: false
-                  minReplicaCount: 0
-                  maxReplicaCount: 20
-                  scaleUp:
-                    stabilizationWindowSeconds: 5
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 300
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 00 19 * * *
-                    desiredReplicas: 10
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 10
-                  cpu:
-                    utilization: 60
-                nodeSelector:
-                  role: karpenter
-                command:
-                  - "./worker"
-                args:
-                  - "-a"
-                  - "http://vault-ui.qat-vault.svc.cluster.local/"
-                  - "-t"
-                  - "$(VAULT_TOKEN)"
-                  - "-p"
-                  - "v1/spin_master/data/worker"
-                env:
-                  - name: OTEL_TRACES_EXPORTER
-                    value: "none"
-                  - name: VAULT_TOKEN
-                    valueFrom:
-                      secretKeyRef:
-                        name: vault-token
-                        key: VAULT_TOKEN
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-                workingDir: /worker
-                dnsPolicy: ClusterFirst
-                restartPolicy: Always
-                terminationGracePeriodSeconds: 15
-                limits:
-                  cpu: '1'
-                  memory: 1000Mi
-                requests:
-                  cpu: '1'
-                  memory: 1000Mi
-                startupProbe:
-                  enabled: false
-                readinessProbe:
-                  enabled: false
-                livenessProbe:
-                  enabled: false
-                ndots:
-                  value: 1
-                ingress:
-                  enabled: false
-              - name: achievementworker
-                imageTag: v0.0.20
-                ecrName: achievementworker
-                replica: 10
-                progressDeadlineSeconds: 600
-                rollout:
-                  enabled: false
-                  alb:
-                    enabled: false
-                scaledObject:
-                  minReplicaCount: 0
-                  maxReplicaCount: 20
-                  scaleUp:
-                    stabilizationWindowSeconds: 5
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 300
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 00 19 * * *
-                    desiredReplicas: 10
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 10
-                  cpu:
-                    utilization: 60
-                nodeSelector:
-                  role: karpenter
-                command:
-                  - "./achievementWorker"
-                args:
-                  - "-a"
-                  - "http://vault-ui.qat-vault.svc.cluster.local/"
-                  - "-t"
-                  - "$(VAULT_TOKEN)"
-                  - "-p"
-                  - "v1/spin_master/data/achievementWorker"
-                env:
-                  - name: OTEL_TRACES_EXPORTER
-                    value: "none"
-                  - name: VAULT_TOKEN
-                    valueFrom:
-                      secretKeyRef:
-                        name: vault-token
-                        key: VAULT_TOKEN
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-                workingDir: /achievementWorker
-                dnsPolicy: ClusterFirst
-                restartPolicy: Always
-                terminationGracePeriodSeconds: 15
-                limits:
-                  cpu: '1000m'
-                  memory: 1000Mi
-                requests:
-                  cpu: '1000m'
-                  memory: 1000Mi
-                startupProbe:
-                  enabled: false
-                readinessProbe:
-                  enabled: false
-                livenessProbe:
-                  enabled: false
-                ndots:
-                  value: 1
-                ingress:
-                  enabled: false
-              - name: judanworker
-                imageTag: v0.0.70
-                ecrName: judanworker
-                replica: 15
-                progressDeadlineSeconds: 600
-                rollout:
-                  enabled: false
-                  alb:
-                    enabled: false
-                scaledObject:
-                  enabled: false
-                  minReplicaCount: 0
-                  maxReplicaCount: 20
-                  scaleUp:
-                    stabilizationWindowSeconds: 5
-                    selectPolicy: Max
-                    pod:
-                      podNumber: 10
-                      seconds: 30
-                    percent:
-                      percentage: 100
-                      seconds: 60
-                    extraPolicies: []
-                  scaleDown:
-                    stabilizationWindowSeconds: 300
-                    selectPolicy: Min
-                    pod:
-                      podNumber: 4
-                      seconds: 60
-                    percent:
-                      percentage: 50
-                      seconds: 60
-                    extraPolicies: []
-                  cronOne:
-                    start: 00 08 * * *
-                    end: 00 19 * * *
-                    desiredReplicas: 10
-                  cronTwo:
-                    start: 00 19 * * *
-                    end: 00 23 * * *
-                    desiredReplicas: 10
-                  cpu:
-                    utilization: 60
-                nodeSelector:
-                  role: karpenter
-                command:
-                  - "./judanWorker"
-                args:
-                  - "-a"
-                  - "http://vault-ui.qat-vault.svc.cluster.local/"
-                  - "-t"
-                  - "$(VAULT_TOKEN)"
-                  - "-p"
-                  - "v1/spin_master/data/judanWorker"
-                ports:
-                  - containerPort: 8090
-                    name: grpc
-                    protocol: TCP
-                env:
-                  - name: OTEL_TRACES_EXPORTER
-                    value: "none"
-                  - name: VAULT_TOKEN
-                    valueFrom:
-                      secretKeyRef:
-                        name: vault-token
-                        key: VAULT_TOKEN
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-                workingDir: /judanWorker
-                dnsPolicy: ClusterFirst
-                restartPolicy: Always
-                terminationGracePeriodSeconds: 15
-                limits:
-                  cpu: '1000m'
-                  memory: 1000Mi
-                requests:
-                  cpu: '1000m'
-                  memory: 1000Mi
-                startupProbe:
-                  enabled: false
-                readinessProbe:
-                  enabled: false
-                livenessProbe:
-                  enabled: false
-                  method: exec
-                ndots:
-                  value: 1
-                services:
-                  # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
-                  - name: judan-worker-grpc-service-new
-                    port: 8091
-                ingress:
-                  enabled: false
-
+global:
+  namespace: qat-slotgame
+  env: qat
+  ecr: 235494821046.dkr.ecr.ap-southeast-1.amazonaws.com
+  secret:
+    enabled: true
+    token: aHZzLlV0bFR2VTA5MlBLVUdkRDBwaHg4RHlZcA==
+  serviceAccount:
+    enabled: false
+microservices:
+  - name: gateway
+    imageTag: v1.1.111
+    annotations:
+      karpenter.sh/do-not-disrupt: "true"
+    rollout:
+      enabled: true
+      canaryService: gateway-canary
+      stableService: gateway-stable
+      alb:
+        enabled: true
+        ingress: gateway-ingress
+        rootService: gateway-stable
+        servicePort: 8845
+      stepsSetWeight:
+        - setCanaryScale:
+            weight: 2
+          setHeaderRoute:
+            match:
+              - headerName: true-client-ip
+                headerValue:
+                  exact: 18.136.28.148
+            name: set-header-gateway
+        - pause: {}
+        - setCanaryScale:
+            matchTrafficWeight: true
+        - setWeight: 10
+        - pause: {}
+        - setWeight: 30
+        - pause: {}
+        - setWeight: 60
+        - pause: {}
+        - setWeight: 100
+        - pause: { duration: 30m }
+    ecrName: gateway
+    replica: 20
+    progressDeadlineSeconds: 600
+    maxSurge: 0
+    maxUnavailable: 2
+    scaledObject:
+      enabled: false
+      minReplicaCount: 0
+      maxReplicaCount: 20
+      scaleUp:
+        stabilizationWindowSeconds: 5
+        selectPolicy: Max
+        pod:
+          podNumber: 10
+          seconds: 30
+        percent:
+          percentage: 100
+          seconds: 60
+        extraPolicies: []
+      scaleDown:
+        stabilizationWindowSeconds: 300
+        selectPolicy: Min
+        pod:
+          podNumber: 4
+          seconds: 60
+        percent:
+          percentage: 50
+          seconds: 60
+        extraPolicies: []
+      cronOne:
+        start: 00 08 * * *
+        end: 00 19 * * *
+        desiredReplicas: 20
+      cronTwo:
+        start: 00 19 * * *
+        end: 00 23 * * *
+        desiredReplicas: 20
+      cpu:
+        utilization: 60
+    nodeSelector:
+      role: karpenter
+    command:
+      - "./gateway"
+    args:
+      - "-a"
+      - "http://vault-ui.qat-vault.svc.cluster.local/"
+      - "-t"
+      - "$(VAULT_TOKEN)"
+      - "-p"
+      - "v1/spin_master/data/gateway"
+    ports:
+      - containerPort: 8090
+        name: grpc
+        protocol: TCP
+      - containerPort: 6060
+        name: pprof
+        protocol: TCP
+    env:
+      - name: VAULT_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: vault-token
+            key: VAULT_TOKEN
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    workingDir: /gateway
+    dnsPolicy: ClusterFirst
+    restartPolicy: Always
+    terminationGracePeriodSeconds: 15
+    limits:
+      cpu: "2"
+      memory: 2000Mi
+    requests:
+      cpu: "2"
+      memory: 2000Mi
+    startupProbe:
+      enabled: false
+    readinessProbe:
+      enabled: true
+      method: httpGet
+      path: /ping
+      port: 8845
+      initialDelaySeconds: 5
+      periodSeconds: 30
+      successThreshold: 1
+      failureThreshold: 3
+      timeoutSeconds: 10
+    livenessProbe:
+      enabled: true
+      method: httpGet
+      path: /ping
+      port: 8845
+      initialDelaySeconds: 10
+      periodSeconds: 30
+      successThreshold: 1
+      failureThreshold: 3
+      timeoutSeconds: 3
+    ndots:
+      value: 1
+    services:
+      # default values (type: ClusterIP, protocol: TCP, targetPort = Port)
+      - name: gateway-stable
+        port: 8845
+      - name: gateway-canary
+        port: 8845
+    ingress:
+      enabled: false
