@@ -3,7 +3,7 @@ entries:
   game-aliyun-chart:
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-18T15:18:01.768265+08:00"
+    created: "2025-07-18T15:24:45.20007+08:00"
     description: Helm Chart
     digest: bced44a4b4a6e4d14d52f41b0ef18c7a67f850d2a65359f38716aa2897960a51
     name: game-aliyun-chart
@@ -14,7 +14,7 @@ entries:
   game-chart:
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-18T15:18:01.802816+08:00"
+    created: "2025-07-18T15:24:45.229963+08:00"
     description: A Helm chart for Kubernetes
     digest: 0ac82392adceb3fd618e9dc74d56bd494ab45e955d41e8ef2b0ab67d0f34633b
     name: game-chart
@@ -24,7 +24,7 @@ entries:
     version: "6.9"
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-18T15:18:01.801843+08:00"
+    created: "2025-07-18T15:24:45.229032+08:00"
     description: A Helm chart for Kubernetes
     digest: 3b58c99fd18f2c2af25482b52bb1f96dd4aa7370277fc2d9017ff551efa4a16e
     name: game-chart
@@ -34,9 +34,9 @@ entries:
     version: "6.6"
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-18T15:18:01.794794+08:00"
+    created: "2025-07-18T15:24:45.222266+08:00"
     description: Helm Chart
-    digest: b85a7cb3b18c2d9778d9fbe752812090dba0ceaa58afec5bd86d95e23b0474b3
+    digest: da48bfa8adf4812e71d4528f1347158f5336501f9d07bdae0b415b0d48fe48e1
     name: game-chart
     type: application
     urls:
@@ -44,7 +44,7 @@ entries:
     version: 0.0.102
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-18T15:18:01.783112+08:00"
+    created: "2025-07-18T15:24:45.20979+08:00"
     description: Helm Chart
     digest: e4b861a3d4204e408a5574cfeac595441e4e92f03f972671563c3d1ef3bb694f
     name: game-chart
@@ -54,7 +54,7 @@ entries:
     version: 0.0.101
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-18T15:18:01.800642+08:00"
+    created: "2025-07-18T15:24:45.2279+08:00"
     description: A Helm chart for Kubernetes
     digest: 21951a07fdce2086c594253f35d6c1ead576a94d8baf2f0cdffe59cfec79ac37
     name: game-chart
@@ -64,7 +64,7 @@ entries:
     version: 0.0.71
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-18T15:18:01.798287+08:00"
+    created: "2025-07-18T15:24:45.225706+08:00"
     description: A Helm chart for Kubernetes
     digest: 61b74866469992fb89089faab1af3515dce934efb8322418de0198a59568573f
     name: game-chart
@@ -74,7 +74,7 @@ entries:
     version: 0.0.70
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-18T15:18:01.796783+08:00"
+    created: "2025-07-18T15:24:45.224349+08:00"
     description: A Helm chart for Kubernetes
     digest: cd3e67ea108d5db36020d0519d826ba032dde2173c486e1283a7e5f0750d7002
     name: game-chart
@@ -84,7 +84,7 @@ entries:
     version: 0.0.66
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-18T15:18:01.795909+08:00"
+    created: "2025-07-18T15:24:45.223436+08:00"
     description: Helm Chart
     digest: 66ef01e002658f771b16a9d06fe6d2a19f5ece7cde58608cb17d7193167e80db
     name: game-chart
@@ -94,7 +94,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-18T15:18:01.795292+08:00"
+    created: "2025-07-18T15:24:45.222789+08:00"
     description: Helm Chart
     digest: 7b7addd3127bd883dc12d3fbc8b3dd841d913a8b377ecef775b716689c7bff34
     name: game-chart
@@ -104,7 +104,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2025-07-18T15:18:01.768948+08:00"
+    created: "2025-07-18T15:24:45.20067+08:00"
     description: A Helm chart for Kubernetes
     digest: 8220f730b42cacbf6988d783505541341a9a819c74289940cb2281817df3801f
     name: game-chart
@@ -112,4 +112,4 @@ entries:
     urls:
     - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.1.tgz
     version: 0.0.1
-generated: "2025-07-18T15:18:01.767215+08:00"
+generated: "2025-07-18T15:24:45.199138+08:00"
