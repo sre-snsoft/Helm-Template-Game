@@ -49,7 +49,7 @@ spec:
               - headerName: true-client-ip
                 headerValue:
                   {{- if .rollout.setHeaderRoute.exact }}
-                  exact: {{ . }}
+                  exact: {{ .rollout.setHeaderRoute.exact }}
                   {{- end }}
                   regex: {{ .rollout.setHeaderRoute.headerValue }}
             name: set-header-{{ .name | lower }}
