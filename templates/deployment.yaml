@@ -53,11 +53,11 @@ spec:
                   {{- end }}
                   regex: {{ .rollout.setHeaderRoute.headerValue }}
             name: set-header-{{ .name | lower }}
+        - pause: {}
       {{- end }}
         - setCanaryScale:
           {{- with .rollout.setCanaryScaleWeight }}
             weight: {{ . }}
-        - pause: {}
           {{- end }}
           {{- with .rollout.setCanaryScaleReplica }}
             replicas: {{ . }}
