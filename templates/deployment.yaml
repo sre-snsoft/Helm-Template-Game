@@ -46,6 +46,9 @@ spec:
             match:
               - headerName: true-client-ip
                 headerValue:
+                  {{- if .rollout.setHeaderRoute.exact }}
+                  exact: {{ . }}
+                  {{- end }}
                   regex: {{ .rollout.setHeaderRoute.headerValue }}
             name: set-header-{{ .name | lower }}
       {{- end }}
