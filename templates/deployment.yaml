@@ -25,6 +25,8 @@ spec:
           ingress: {{ .rollout.alb.ingress }}
           rootService: {{ .rollout.alb.rootService }}
           servicePort: {{ .rollout.alb.servicePort | default 443 }}
+        managedRoutes:
+          - name: set-header-{{ .name | lower }}
         {{- else }}
         # Default to APIsix traffic routing if it's not ALB
         apisix:
