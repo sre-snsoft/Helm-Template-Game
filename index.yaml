@@ -54,6 +54,16 @@ entries:
     version: 0.0.101
   - apiVersion: v2
     appVersion: "1.0"
+    created: "2025-07-18T12:13:55.865244+08:00"
+    description: Helm Chart for EGAME
+    digest: a5e7f6308c0b684cefb36d5681723de1c7acc4557ea9c5c8a37a40c89e9ad795
+    name: game-chart
+    type: application
+    urls:
+    - https://sre-snsoft.github.io/Helm-Template-Game/game-chart-0.0.73.tgz
+    version: 0.0.73
+  - apiVersion: v2
+    appVersion: "1.0"
     created: "2025-07-18T16:05:52.255867+08:00"
     description: A Helm chart for Kubernetes
     digest: 21951a07fdce2086c594253f35d6c1ead576a94d8baf2f0cdffe59cfec79ac37
